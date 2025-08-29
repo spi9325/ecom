@@ -19,48 +19,38 @@ import { registerSchema } from "@/app/zodSchemas/types";
 
 export default function Page() {
  const router = useRouter();
-
   async function signup(e: FormEvent<HTMLFormElement>) {
-    const toastId = toast.loading("Signing up...");
-
     try {
         e.preventDefault();
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email") as string | undefined;
         const password = formData.get("password") as string | undefined;
         if (!email || !password) {
-          toast.dismiss(toastId);
           toast.error("please provide all values");
           return;
         }
         const validInput = registerSchema.safeParse({ email, password });
         if (!validInput.success) {
-          toast.dismiss(toastId);
-          toast.error(validInput.error.message);
+          toast.error((Array(validInput.error).map(cur=>(cur.issues[0].message))).toString())
           return;
         }
         const result = await axios.post(
-          `${process.env.NEXT_PUBLIC_Backend_URL}/add/signupuser`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/add/user`,
           {
             email: validInput.data.email,
             password: validInput.data.password,
           }
         );
-        if (!result.data.success) {
-          toast.dismiss(toastId);
-          toast.error(result.data.message+"!resssss");
-          return;
-        } else {
-        toast.dismiss(toastId);
-          toast.success(result.data.message);
-          router.push("/login");
+        if(result.data){
+          toast.success(result.data.toString())
+          // console.log(result.data)
         }
     } catch (error:any) {
-        console.error(error);
-        toast.error(error.response.data.message)
-        toast.dismiss(toastId)
+        // console.error(error.response.data.message);
+        if(error.response.status == 400){
+          toast.error(error.response.data.message);
+        }
     }
-
   }
 
   return (
