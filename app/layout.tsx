@@ -14,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html>
-      <body>
+      <body className="bg-gray-100">
         {children}
         <ToastContainer position="top-right" autoClose={3000} />
       </body>

@@ -16,13 +16,12 @@ interface propType {
 export function Navbar({ disableAnimation }: propType) {
   const { data: authData } = useSession();
   const [nav, setNav] = useState<boolean>(false);
-  const [curNav, setCurNav] = useState({ explore: false });
-  const [theme, setTheme] = useState("light");
+ 
   
 
   return (
     <header
-      className={`max-w-[1440px] mx-auto flex justify-between items-center pr-3 z-50 fixed top-0 left-0 right-0 backdrop-blur-xl`}
+      className={`max-w-[1440px] mx-auto flex justify-between items-center pr-3 z-50 fixed top-0 left-0 right-0 backdrop-blur-xl glass`}
     >
       <div className="flex p-1 py-4 gap-2 md:gap-[100px] borde">
         <div
@@ -39,7 +38,7 @@ export function Navbar({ disableAnimation }: propType) {
           className={` pl-2 flex justify-center items-center cursor-pointer`}
         >
           <p
-            className={`logo text-2xl lg:text-3xl font-bold lg:pl-3`}
+            className={`logo text-2xl lg:text-3xl font-bold lg:pl-3 font-serif`}
           >
             E-COM
           </p>
@@ -57,7 +56,7 @@ export function Navbar({ disableAnimation }: propType) {
 
       </div>
 
-        <div className="flex justify-center items-center gap-2">
+        <div className="flex justify-center items-center gap-4 pr-5">
           <div className="cursor-pointer">
           {authData?.user != null && authData.user != undefined ? (
             <Profile authData={authData?.user} />
