@@ -1,80 +1,55 @@
 import { create } from 'zustand'
-import { cartStoreType, cartType, cartViewType, ProductStore } from './types'
+import { ProductStore } from './types'
 
 
 export const useProducts = create<ProductStore>((set) => ({
   products:[
     {
       name: "Purpule-Glass",
-      price: 3000,
-      details: "Round Selfy Black Frame White lens.",
-      textcolor: "text-purple-400",
-      color: "Gold",
-      material: "Fiber",
-      imageUrl: "/glass1.jpg",
-      availabel:"availabel"
+      details: "Stylish sunglasses designed to protect your eyes from harmful UV rays. Lightweight frame with a comfortable fit for all-day wear. Perfect blend of fashion and function for everyday use.",
+      limited:true,
+      price: 859,
+      basePrice:1259,
+      material:"Fiber",
+      color:"Purple",
+      company:"Blaze",
+      imageUrl:"/glass1.jpg"
     },
     {
-      name: "Golden-Rounded",
-      price: 3000,
-      details: "Round Selfy Black Frame White lens.",
-      textcolor: "text-yellow-400",
-      color: "Gold",
-      material: "Fiber",
-      imageUrl: "/glass2.jpg",
-      availabel:"availabel"
+      name: "Purpule-Glasss",
+      details: "Stylish sunglasses designed to protect your eyes from harmful UV rays. Lightweight frame with a comfortable fit for all-day wear. Perfect blend of fashion and function for everyday use.",
+      limited:false,
+      price: 859,
+      basePrice:1259,
+      material:"metal",
+      color:"Golden",
+      company:"Blaze",
+      imageUrl:"/glass2.jpg"
     },
     {
-      name: "Black-class",
-      price: 3000,
-      details: "Round Selfy Black Frame White lens.",
-      textcolor: "text-black",
-      color: "Black",
-      material: "Fiber",
-      imageUrl: "/glass3.jpg",
-      availabel:"availabel"
+      name: "Purpule-Gasss",
+      details: "Stylish sunglasses designed to protect your eyes from harmful UV rays. Lightweight frame with a comfortable fit for all-day wear. Perfect blend of fashion and function for everyday use.",
+      limited:false,
+      price: 859,
+      basePrice:1259,
+      material:"metal",
+      color:"Golden",
+      company:"Blaze",
+      imageUrl:"/glass2.jpg"
     },
     {
-      name: "Light-Golden-class-2",
-      price: 3000,
-      details: "Round Selfy Black Frame White lens.",
-      textcolor: "text-slate-400",
-      color: "Light-Gold",
-      material: "Fiber",
-      imageUrl: "/glass4.jpg",
-      availabel:"not availabel"
-    },
-    {
-      name: "Golden-class-1",
-      price: 3000,
-      details: "Round Selfy Black Frame White lens.",
-      textcolor: "text-black",
-      color: "Black",
-      material: "Fiber",
-      imageUrl: "/glass5.jpg",
-      availabel:"availabel"
+      name: "Purple-Glasss",
+      details: "Stylish sunglasses designed to protect your eyes from harmful UV rays. Lightweight frame with a comfortable fit for all-day wear. Perfect blend of fashion and function for everyday use.",
+      limited:false,
+      price: 859,
+      basePrice:1259,
+      material:"metal",
+      color:"Golden",
+      company:"Blaze",
+      imageUrl:"/glass2.jpg"
     },
   ],
 }))
 
-export const cartStore = create<cartStoreType>((set)=>({
-  myCart: [],
 
-  add: (name:string, price:string, availabel:string, image:string) =>
-    set((state) => ({
-      myCart: [...state.myCart, { name, price, availabel, image },],
-    })),
 
-  remove:(name:string)=>
-    set((state) => ({
-      myCart: state.myCart.filter((item) => item.name != name),
-    })),
-}))
-
-export const cartView = create<cartViewType>((set)=>({
-  currentCart:"",
-  viewCart:(cartName)=>
-    set((state)=>({
-      currentCart: cartName
-    }))
-}))

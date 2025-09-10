@@ -12,6 +12,8 @@ import { useProducts } from '@/app/store/products';
 import { productTypes } from '@/app/store/types';
 import { useCartStore } from '@/app/store/carts';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 
 
 
@@ -20,7 +22,8 @@ export const CurrentProduct = () => {
     const [qtyAmount, setQtyAmount] = useState(1);
     const [currentProduct, setcurrentProduct] = useState<productTypes[]>([]);
     const { products } = useProducts();
-    const {carts,addToCart} = useCartStore()
+    const {carts,addToCart} = useCartStore();
+    const {data:authData} = useSession();
 
     const params = useParams()
     const id = params.id;
@@ -36,21 +39,28 @@ export const CurrentProduct = () => {
     function handelDecrease() {
         qtyAmount > 1 ? setQtyAmount((prev) => prev - 1) : null
     }
-    function handelAddToCart(name:string,image:string,qty:number,price:number,total:number){
-        const alredyExist = carts.find((cur)=>cur.name === name); 
-        if(alredyExist){
+
+    async function handelAddToCart(name:string,image:string,qty:number,price:number,total:number){
+        const alredyExist = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/add/cart`,{name,email:authData?.user?.email,price:price.toString(),image,qty:qtyAmount.toString(),total:total.toString()})  
+        console.log(alredyExist.data)
+        if(alredyExist.data === "cart already exist..."){
             toast.warning("product Already In Cart")
         }else{
-            console.log("not exist");
             addToCart(name,image,qty,price,total);
-            router.push("/cart")
+            if(!authData?.user){
+                toast.warning("Login First");
+                router.push("/login")
+            }else{
+                 router.push("/cart");
+            }
         }
     }
+
     return (
-        <section className="mt-[100px] border border-black p-2">
+        <section className="mt-[100px] p-2 max-w-[1440px] mx-auto lg:px-4">
             {
                 currentProduct.map((curProd) => (
-                    <div key={curProd.name} className="border border-red-300 p-1 flex flex-col sm:flex-row gap-3 justify-center items-cente">
+                    <div key={curProd.name} className=" p-1 flex flex-col sm:flex-row gap-3 lg:gap-9 lg:px-[100px] justify-center items-cente">
 
                         <div className="w-full sm:w-[40%] bg-purple-500 relative h-[300px]">
                             <Image
@@ -62,8 +72,8 @@ export const CurrentProduct = () => {
                         </div>
 
                         <div className="w-full sm:w-[55%]  px-2 py-1">
-                            <h1 className="text-xl font-semibold mb-3">{curProd.name}</h1>
-                            <p className=" px-1 py-2 overflow-hidden h-[120px] font-extralight mb-3">
+                            <h1 className="text-xl font-semibold mb-3 lg:text-3xl">{curProd.name}</h1>
+                            <p className=" px-1 lg:w-[60%] py-2 overflow-hidden h-[120px] font-extralight mb-3">
                                {curProd.details}
                             </p>
                             <span className={`text-sm  ${curProd.limited ? "bg-red-600 text-white" : "bg-green-400 text-black"} py-1 px-2  rounded-sm shadow-md`}>{curProd.limited ? "Limited time deal" : "All Time"}</span>

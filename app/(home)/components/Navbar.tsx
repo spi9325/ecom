@@ -2,29 +2,30 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { parseAsBoolean, useQueryState } from 'nuqs';
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { IoCartOutline } from "react-icons/io5";
 import { SlMenu } from "react-icons/sl";
-import { Cart } from "./Cart";
 import { Profile } from "./Profile";
-import { cartStore } from "@/app/store/products";
+import axios from "axios";
+import { useCartStore } from "@/app/store/carts";
 
 
 export function Navbar() {
   const { data: authData } = useSession();
   const [nav, setNav] = useState<boolean>(false);
-  const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
+  const {addToCart} = useCartStore();
+
+  //  async function getCart(){
+  //           const cart = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get/cart`,{email:authData?.user?.email})
+  //           if(cart.data.myCart){
+  //               cart.data.myCart.map((cur:any)=>{
+  //                   addToCart(cur.name,cur.image,Number(cur.qty),Number(cur.price),Number(cur.total))
+  //               })
+  //           }
+            
+  //       }
   
-  function handelCartOpen() {
-    if(!authData?.user){
-      router.push("/login")
-    }else{
-      setIsOpen((prev) => !prev);
-    }
-  }
   return (
     <header
       className={`max-w-[1440px] mx-auto flex justify-between items-center pr-3 z-50 fixed top-0 left-0 right-0 backdrop-blur-xl glass`}
@@ -76,10 +77,9 @@ export function Navbar() {
             </Link>
           )}
         </div>
-        <div onClick={handelCartOpen} className="hover:cursor-pointer">
+        <Link href={"/cart"} className="hover:cursor-pointer">
           <IoCartOutline className="text-3xl" />
-          {/* disply cart is toggle */}
-        </div>
+        </Link>
       </div>
 
       {/* nav */}
@@ -92,13 +92,6 @@ export function Navbar() {
           </nav>
         )}
       </div>
-
-      {/* cart section */}
-      {
-       isOpen&&<div className="absolute right-3 sm:right-5 top-[85px] bg-blue-100 w-[350px] h-[300px] sm:w-[500px] sm:h-[500px] rounded-xl overflow-x-hidden">
-                 <Cart />
-               </div>
-      }
     </header>
   );
 }

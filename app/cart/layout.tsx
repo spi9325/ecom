@@ -1,7 +1,7 @@
+import { Navbar } from "@/app/(home)/components/Navbar";
 import { SessionProvider } from "next-auth/react";
-import { Navbar } from "./components/Navbar";
 
-export default function HomeLayout({
+export default function ViewCartLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
