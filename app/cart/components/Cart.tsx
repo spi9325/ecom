@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { toast } from "react-toastify";
@@ -13,15 +14,17 @@ export const Cart = () => {
   const [carts, setCart] = useState<cartTypes[]>([]);
   const [allTotal, setAllTotal] = useState(0);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const { data: authData } = useSession();
 
-  async function handelIncrease(name: string) {
+  async function handelIncrease(name: string,qty:number) {
     const updatedQty = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/quantity/increase`,{name},{withCredentials:true})  
     if(updatedQty.data.message === "Quantity updated"){
       setCart(prev =>
         prev.map(cur =>
-          cur.name === name ? { ...cur, qty: cur.qty + 1 } : cur
+          // cur.name === name ? { ...cur, qty: cur.qty + 1 } : cur
+          cur.name === name ? { ...cur, qty: cur.qty + 1,total: Number(cur.price) * (cur.qty + 1) } : cur
         )
       );
     }
@@ -31,7 +34,7 @@ export const Cart = () => {
         if(qty > 1){
           const updatedQty = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/quantity/decrease`,{name},{withCredentials:true})  
           if(updatedQty.data.message === "Quantity updated"){
-           setCart((prev) => prev.map(cur => cur.name === name ? { ...cur, qty: cur.qty - 1 } : cur))
+           setCart((prev) => prev.map(cur => cur.name === name ? { ...cur, qty: cur.qty - 1, total: Number(cur.price) * (cur.qty - 1)} : cur))
           }
         }else{
           toast.error("why are you making 0 qty...")
@@ -70,11 +73,23 @@ export const Cart = () => {
       setCart([]);
     };
   }, []);
+
+  async function handelOrder(){
+    const order = await axios.put(`${process.env.NEXT_PUBLIC_BACKEND_URL}/order/place`,{carts},{withCredentials:true})    
+
+    if(order.data){
+      const removedAll = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/remove/all`,{withCredentials:true})    
+      if(removedAll.status === 200){
+        router.push("/orders")
+      }
+    }
+  }
+
   return (
     <section className="sm:grid sm:grid-cols-2 sm:gap-2 md:block mt-[200px] p-2 md:h-[410px] max-w-[1440px] mx-auto overflow-x-hidden overflow-y-scroll">
       {/* all total */}
 
-      <div className="absolute top-[100px] py-4 border w-full flex justify-center items-center flex-col">
+      <div className="border border-black absolute top-[100px] py-4 w-full flex justify-center items-center flex-col max-w-[1440px]">
         <div className="flex gap-3">
           <span className="font-semibold">All Total : </span>
           <span className="">
@@ -88,16 +103,14 @@ export const Cart = () => {
             }
           </span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-7">
           <span className="font-semibold">Delivery Fee :</span>
           <span className="">{allTotal > 1000 ? "₹" + 20 : "₹" + 0}</span>
+          <Button onClick={handelOrder} className="px-2">Make Order</Button>
         </div>
       </div>
-
+      
       {/* all total end */}
-
-
-
 
       {
         loading ? <p className="">loading......</p> :
@@ -109,7 +122,7 @@ export const Cart = () => {
               <div className="  md:w-[40%] md:h-[100px] flex flex-col md:flex-row justify-center items-center gap-2 overflow-hidden">
                 <div className="">
                   <Image
-                    src={"/glass1.jpg"}
+                    src={cur.image}
                     alt="image"
                     width={100}
                     height={100}
@@ -154,7 +167,7 @@ export const Cart = () => {
               <div className="md:h-[100px] flex justify-center items-center gap-3">
                 <Button onClick={() => handelDecrease(cur.name, cur.qty)} className=" text-2xl p-2 text-white bg-black cursor-pointer"><FaMinus /></Button>
                 <span className="px-5 text-xl">{cur.qty}</span>
-                <Button onClick={() => handelIncrease(cur.name)} className=" text-2xl p-2 text-white bg-black cursor-pointer"><FaPlus /></Button>
+                <Button onClick={() => handelIncrease(cur.name,cur.qty)} className=" text-2xl p-2 text-white bg-black cursor-pointer"><FaPlus /></Button>
               </div>
 
               <div className="md:h-[100px] mx-auto md:flex md:justify-center md:items-center">

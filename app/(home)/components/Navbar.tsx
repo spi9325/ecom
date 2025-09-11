@@ -2,29 +2,16 @@
 
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { IoCartOutline } from "react-icons/io5";
 import { SlMenu } from "react-icons/sl";
 import { Profile } from "./Profile";
-import axios from "axios";
-import { useCartStore } from "@/app/store/carts";
 
 
 export function Navbar() {
   const { data: authData } = useSession();
   const [nav, setNav] = useState<boolean>(false);
-  const {addToCart} = useCartStore();
 
-  //  async function getCart(){
-  //           const cart = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/get/cart`,{email:authData?.user?.email})
-  //           if(cart.data.myCart){
-  //               cart.data.myCart.map((cur:any)=>{
-  //                   addToCart(cur.name,cur.image,Number(cur.qty),Number(cur.price),Number(cur.total))
-  //               })
-  //           }
-            
-  //       }
   
   return (
     <header
@@ -58,6 +45,12 @@ export function Navbar() {
           >
             Home
           </Link>
+          <Link
+            href={"/orders"}
+            className="text-[15px] flex justify-center items-center text-black hover:text-slate-600  dark:text-slate-400 dark:hover:text-white  font-medium cursor-pointer"
+          >
+            Orders
+          </Link>
 
         </nav>
 
@@ -88,6 +81,9 @@ export function Navbar() {
           <nav className="flex flex-col pl-4 text-xl gap-2 py-3 w-[95%]">
             <Link className="" href={"/"}>
               Home
+            </Link>
+            <Link className="" href={"/orders"}>
+              Orders
             </Link>
           </nav>
         )}

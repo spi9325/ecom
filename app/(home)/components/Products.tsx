@@ -24,9 +24,7 @@ export const Products = () => {
                 className='border border-blac h-full w-full'
               />
             </div>
-            <div className="px-5 mt-4 md:mt-5">
-              <p className="">{cur.details}</p>
-            </div>
+            <span className="mx-auto mt-4 text-green-400 bg-green-100 rounded-md px-2">{cur.name}</span>
             <div className="px-5 mt-3 md:mt-4 flex justify-between gap-3">
               <span className="font-bold">{cur.material}</span>
               <span className={`font-bold`}>{cur.color}</span>
